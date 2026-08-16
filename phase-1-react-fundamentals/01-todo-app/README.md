@@ -1,11 +1,11 @@
 # Todo App
 
-## 🎯 Objective
+##  Objective
 
 Build a basic task management application while learning
 React fundamentals.
 
-## 🧠 Concepts Learned
+## Concepts Learned
 
 - Components
 - Props
@@ -15,14 +15,14 @@ React fundamentals.
 - Conditional rendering
 - localStorage
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - React
 - TypeScript
 - Vite
 - Tailwind CSS
 
-## ✨ Features
+##  Features
 
 - Create tasks
 - Delete tasks
@@ -31,7 +31,7 @@ React fundamentals.
 - Filter tasks
 - Persistent storage
 
-## 🚀 Running Locally
+##  Running Locally
 
 ```bash
 npm install
