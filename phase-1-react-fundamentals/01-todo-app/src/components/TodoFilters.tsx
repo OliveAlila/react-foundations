@@ -1,44 +1,100 @@
-type Filter = 'all' | 'active' | 'completed'
+import { useEffect, useState } from 'react'
+import TodoForm from './components/TodoForm'
+import TodoList from './components/TodoList'
+import TodoFilters from './components/TodoFilters'
+import type { Todo } from './types/todo'
+import type { Filter } from './components/TodoFilters'
 
-interface TodoFiltersProps {
-  filter: Filter
-  onFilterChange: (filter: Filter) => void
-  activeCount: number
-}
+function App() {
+  const [todos, setTodos] = useState<Todo[]>(() => {
+    const savedTodos = localStorage.getItem('todos')
 
-function TodoFilters({
-  filter,
-  onFilterChange,
-  activeCount,
-}: TodoFiltersProps) {
+    return savedTodos ? JSON.parse(savedTodos) : []
+  })
+
+  const [filter, setFilter] = useState<Filter>('all')
+
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos))
+  }, [todos])
+
+  const addTodo = (text: string) => {
+    const newTodo: Todo = {
+      id: Date.now(),
+      text,
+      completed: false,
+    }
+
+    setTodos((currentTodos) => [
+      ...currentTodos,
+      newTodo,
+    ])
+  }
+
+  const toggleTodo = (id: number) => {
+    setTodos((currentTodos) =>
+      currentTodos.map((todo) =>
+        todo.id === id
+          ? { ...todo, completed: !todo.completed }
+          : todo
+      )
+    )
+  }
+
+  const deleteTodo = (id: number) => {
+    setTodos((currentTodos) =>
+      currentTodos.filter((todo) => todo.id !== id)
+    )
+  }
+
+  const editTodo = (id: number, text: string) => {
+    setTodos((currentTodos) =>
+      currentTodos.map((todo) =>
+        todo.id === id
+          ? { ...todo, text }
+          : todo
+      )
+    )
+  }
+
+  const filteredTodos = todos.filter((todo) => {
+    if (filter === 'active') {
+      return !todo.completed
+    }
+
+    if (filter === 'completed') {
+      return todo.completed
+    }
+
+    return true
+  })
+
+  const activeCount = todos.filter(
+    (todo) => !todo.completed
+  ).length
+
   return (
-    <div className="todo-filters">
-      <span>{activeCount} tasks left</span>
+    <main className="app">
+      <div className="todo-container">
+        <h1>My Todo List</h1>
 
-      <div>
-        <button
-          className={filter === 'all' ? 'active-filter' : ''}
-          onClick={() => onFilterChange('all')}
-        >
-          All
-        </button>
+        <TodoForm onAddTodo={addTodo} />
 
-        <button
-          className={filter === 'active' ? 'active-filter' : ''}
-          onClick={() => onFilterChange('active')}
-        >
-          Active
-        </button>
+        <TodoFilters
+          filter={filter}
+          onFilterChange={setFilter}
+          activeCount={activeCount}
+        />
 
-        <button
-          className={filter === 'completed' ? 'active-filter' : ''}
-          onClick={() => onFilterChange('completed')}
-        >
-          Completed
-        </button>
+        <TodoList
+          todos={filteredTodos}
+          onToggle={toggleTodo}
+          onDelete={deleteTodo}
+          onEdit={editTodo}
+        />
       </div>
-    </div>
+    </main>
   )
 }
 
-export default TodoFilters
+export default App
