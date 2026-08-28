@@ -7,6 +7,7 @@ APIs, databases, authentication and full-stack development.
 
 ### Phase 1: React Fundamentals
 - [x] Todo App
+- [x] Profile Card
 - [ ] Expense Tracker
 - [ ] Color Palette Generator
 - [ ] Pomodoro Timer
