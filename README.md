@@ -9,7 +9,7 @@ APIs, databases, authentication and full-stack development.
 - [x] Todo App
 - [x] Profile Card
 - [x] Expense Tracker
-- [ ] Color Palette Generator
+- [x] Color Palette Generator
 - [ ] Pomodoro Timer
 
 ### Phase 2: APIs
