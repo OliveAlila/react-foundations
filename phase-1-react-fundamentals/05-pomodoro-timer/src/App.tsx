@@ -1,122 +1,140 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import Timer from "./components/Timer";
+import TimerControls from "./components/TimerControls";
+import SessionInfo from "./components/SessionInfo";
+import type { TimerMode } from "./types/timer";
+import "./App.css";
+
+const WORK_TIME = 25 * 60;
+const SHORT_BREAK_TIME = 5 * 60;
+const LONG_BREAK_TIME = 15 * 60;
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [mode, setMode] = useState<TimerMode>("work");
+  const [timeLeft, setTimeLeft] = useState(WORK_TIME);
+  const [isRunning, setIsRunning] = useState(false);
+  const [completedSessions, setCompletedSessions] = useState(0);
+
+  useEffect(() => {
+    if (!isRunning) {
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setTimeLeft((currentTime) => {
+        if (currentTime <= 1) {
+          return 0;
+        }
+
+        return currentTime - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isRunning]);
+
+  useEffect(() => {
+    if (timeLeft !== 0) {
+      return;
+    }
+
+    if (mode === "work") {
+      const newCompletedSessions = completedSessions + 1;
+
+      setCompletedSessions(newCompletedSessions);
+
+      if (newCompletedSessions % 4 === 0) {
+        setMode("longBreak");
+        setTimeLeft(LONG_BREAK_TIME);
+      } else {
+        setMode("shortBreak");
+        setTimeLeft(SHORT_BREAK_TIME);
+      }
+    } else {
+      setMode("work");
+      setTimeLeft(WORK_TIME);
+    }
+
+    setIsRunning(false);
+  }, [timeLeft, mode, completedSessions]);
+
+  useEffect(() => {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+
+    document.title = `${String(minutes).padStart(2, "0")}:${String(
+      seconds
+    ).padStart(2, "0")} - Pomodoro`;
+  }, [timeLeft]);
+
+  const handleStartPause = () => {
+    setIsRunning((currentState) => !currentState);
+  };
+
+  const handleReset = () => {
+    setIsRunning(false);
+
+    if (mode === "work") {
+      setTimeLeft(WORK_TIME);
+    } else if (mode === "shortBreak") {
+      setTimeLeft(SHORT_BREAK_TIME);
+    } else {
+      setTimeLeft(LONG_BREAK_TIME);
+    }
+  };
+
+  const handleSkip = () => {
+    setIsRunning(false);
+
+    if (mode === "work") {
+      setMode("shortBreak");
+      setTimeLeft(SHORT_BREAK_TIME);
+    } else {
+      setMode("work");
+      setTimeLeft(WORK_TIME);
+    }
+  };
+
+  const totalTime =
+    mode === "work"
+      ? WORK_TIME
+      : mode === "shortBreak"
+      ? SHORT_BREAK_TIME
+      : LONG_BREAK_TIME;
+
+  const progress = ((totalTime - timeLeft) / totalTime) * 100;
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <main className="app">
+      <div className="pomodoro-container">
+        <h1>Pomodoro Timer</h1>
 
-      <div className="ticks"></div>
+        <p className="description">
+          Focus for 25 minutes, then take a break.
+        </p>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        <div className="timer-card">
+          <Timer timeLeft={timeLeft} mode={mode} />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+          <div className="progress-container">
+            <div
+              className="progress-bar"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+
+          <TimerControls
+            isRunning={isRunning}
+            onStartPause={handleStartPause}
+            onReset={handleReset}
+            onSkip={handleSkip}
+          />
+        </div>
+
+        <SessionInfo completedSessions={completedSessions} />
+      </div>
+    </main>
+  );
 }
 
-export default App
+export default App;
