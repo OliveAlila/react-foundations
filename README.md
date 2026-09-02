@@ -10,7 +10,7 @@ APIs, databases, authentication and full-stack development.
 - [x] Profile Card
 - [x] Expense Tracker
 - [x] Color Palette Generator
-- [ ] Pomodoro Timer
+- [x] Pomodoro Timer
 
 ### Phase 2: APIs
 - [ ] Weather Dashboard
