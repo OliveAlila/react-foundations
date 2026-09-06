@@ -13,7 +13,7 @@ APIs, databases, authentication and full-stack development.
 - [x] Pomodoro Timer
 
 ### Phase 2: APIs
-- [ ] Weather Dashboard
+- [x] Weather Dashboard
 - [ ] GitHub Explorer
 - [ ] Book Search
 - [ ] Movie App
