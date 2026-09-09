@@ -14,7 +14,7 @@ APIs, databases, authentication and full-stack development.
 
 ### Phase 2: APIs
 - [x] Weather Dashboard
-- [ ] GitHub Explorer
+- [x] GitHub Explorer
 - [ ] Book Search
 - [ ] Movie App
 
